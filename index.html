@@ -402,66 +402,6 @@ let state = {
 function totalUnits(){ return state.mode === 'hizb' ? 120 : 30; }
 function unitLabel(){ return state.mode === 'hizb' ? 'حزب' : 'جزء'; }
 
-/*═══════════════════════════════════════════════
-  Storage Manager
-  فعلاً از localStorage استفاده می‌کند
-  بعداً فقط همین قسمت به Firebase متصل می‌شود.
-═══════════════════════════════════════════════*/
-
-const StorageManager = {
-
-    async load() {
-
-        try {
-
-            const saved = localStorage.getItem(STORAGE_KEY);
-
-            if (!saved) return null;
-
-            return JSON.parse(saved);
-
-        } catch (err) {
-
-            console.error("Storage Load Error :", err);
-
-            localStorage.removeItem(STORAGE_KEY);
-
-            return null;
-
-        }
-
-    },
-
-    async save(data) {
-
-        try {
-
-            localStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(data)
-            );
-
-            return true;
-
-        } catch (err) {
-
-            console.error("Storage Save Error :", err);
-
-            return false;
-
-        }
-
-    },
-
-    async clear() {
-
-        localStorage.removeItem(STORAGE_KEY);
-
-    }
-
-};
-
-
 async function loadOnlineState(){
 
     const {data,error}=await sb
@@ -497,15 +437,35 @@ async function loadOnlineState(){
     });
 
 }
+async function loadMetaState(){
+
+    const { data, error } = await sb
+        .from("khatm_meta")
+        .select("*")
+        .eq("khatm_id", KHATM_ID)
+        .maybeSingle();
+
+    if(error){
+        console.error("Load meta error:", error);
+        return;
+    }
+
+    if(data){
+        state.dedication = {
+            occasion: data.occasion ?? 'مجلس ترحیم',
+            name: data.name ?? '',
+            note: data.note ?? ''
+        };
+        state.round = data.round ?? 1;
+        state.mode = data.mode ?? 'juz';
+        state.history = data.history ?? [];
+    }
+
+}
+
 async function loadState() {
 
-    const saved = await StorageManager.load();
-
-    if (saved) {
-
-        state = saved;
-
-    }
+    await loadMetaState();
 
     // جلوگیری از خطا در نسخه‌های قدیمی
 
@@ -521,11 +481,22 @@ async function loadState() {
 
 async function saveState() {
 
-    const ok = await StorageManager.save(state);
+    const { error } = await sb
+        .from("khatm_meta")
+        .upsert({
+            khatm_id: KHATM_ID,
+            occasion: state.dedication.occasion,
+            name: state.dedication.name,
+            note: state.dedication.note,
+            round: state.round,
+            mode: state.mode,
+            history: state.history,
+            updated_at: new Date().toISOString()
+        });
 
-    if (!ok) {
+    if (error) {
 
-        alert("خطا در ذخیره اطلاعات.");
+        alert("خطا در ذخیره اطلاعات:\n" + error.message);
 
     }
 
@@ -813,6 +784,7 @@ async function startNewRound(){
 
 (async function init(){
   await loadState();
+  await loadOnlineState();
   render();
 })();
 sb
@@ -836,6 +808,38 @@ table:"claims"
 payload=>{
 
 loadOnlineState().then(()=>{
+
+render();
+
+});
+
+}
+
+)
+
+.subscribe();
+
+sb
+
+.channel("khatm_meta")
+
+.on(
+
+"postgres_changes",
+
+{
+
+event:"*",
+
+schema:"public",
+
+table:"khatm_meta"
+
+},
+
+payload=>{
+
+loadMetaState().then(()=>{
 
 render();
 
