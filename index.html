@@ -323,6 +323,9 @@ const urlParams = new URLSearchParams(window.location.search);
 
 const KHATM_ID = urlParams.get("id") || "default";
 
+// دسترسی مدیر فقط با لینک مخصوص (?admin=1234) نمایش داده می‌شود
+const IS_ADMIN = urlParams.get("admin") === "1234";
+
 // کلید ذخیره مخصوص هر ختم
 const STORAGE_KEY = `khatm_${KHATM_ID}`;
 // =========================
@@ -558,7 +561,7 @@ function render(){
         <button class="mode-btn ${state.mode==='juz' ? 'active' : ''}" data-mode="juz">تقسیم به جزء (۳۰ بخش)</button>
         <button class="mode-btn ${state.mode==='hizb' ? 'active' : ''}" data-mode="hizb">تقسیم به حزب (۱۲۰ بخش)</button>
       </div>
-      <button class="edit-btn" id="editBtn">ویرایش اطلاعات مجلس</button>
+      ${IS_ADMIN ? '<button class="edit-btn" id="editBtn">ویرایش اطلاعات مجلس</button>' : ''}
     </div>
 
     <div class="share-hint">انتخاب هر ${unit} کاملاً آزاد است — هرکس هر ${unit} خالی را که بخواهد، به هر ترتیبی، می‌تواند برای خودش ثبت کند (لازم نیست از ۱ شروع کنید). این صفحه را می‌توانید لینکش را در گروه یا کانال (واتساپ، تلگرام و…) به اشتراک بگذارید؛ انتخاب‌ها برای همه به‌صورت زنده به‌روزرسانی می‌شود.</div>
@@ -573,7 +576,8 @@ function render(){
     ${historyHtml}
   `;
 
-  document.getElementById('editBtn').onclick = openDedicationModal;
+  const editBtnEl = document.getElementById('editBtn');
+  if(editBtnEl){ editBtnEl.onclick = openDedicationModalWithAuth; }
   if(isComplete){
     document.getElementById('newRoundBtn').onclick = startNewRound;
   }
@@ -742,6 +746,15 @@ function nameFieldLabel(occasion){
   if(cat==='health') return 'نام کسی که برای سلامتی‌اش دعا می‌کنید (اختیاری)';
   if(cat==='friday') return 'نام (اختیاری)';
   return 'نام مرحوم / مرحومه (اختیاری)';
+}
+
+function openDedicationModalWithAuth(){
+  const password = prompt("رمز مدیر را وارد کنید");
+  if(password !== "1234"){
+    if(password !== null){ alert("رمز اشتباه است."); }
+    return;
+  }
+  openDedicationModal();
 }
 
 function openDedicationModal(){
