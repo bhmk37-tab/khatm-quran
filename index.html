@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ختم قرآن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0E2622;
+    --bg-panel:#153A32;
+    --bg-panel-light:#1C4A40;
+    --bg-card:#194239;
+    --gold:#C9A24B;
+    --gold-soft:#E8D9A8;
+    --gold-dim:#8C7538;
+    --text-cream:#F3ECDD;
+    --text-muted:#9FBBB0;
+    --border-sage:#2C5347;
+    --warn:#A6543A;
+    --shadow:0 8px 28px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:transparent;color:var(--text-cream);font-family:'Vazirmatn',sans-serif;}
+  .app{
+    position:relative;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(201,162,75,0.07), transparent 40%),
+      radial-gradient(circle at 90% 85%, rgba(201,162,75,0.06), transparent 45%),
+      var(--bg-deep);
+    padding:28px 16px 60px;
+    overflow-x:hidden;
+  }
+  .bg-pattern{
+    position:absolute; inset:0; pointer-events:none; opacity:0.05;
+    background-image:
+      radial-gradient(var(--gold) 1px, transparent 1.6px);
+    background-size:26px 26px;
+  }
+
+  /* ---------- Header / Dedication ---------- */
+  .dedication-card{
+    position:relative;
+    max-width:640px;
+    margin:0 auto 30px;
+    text-align:center;
+    background:linear-gradient(180deg, var(--bg-panel-light), var(--bg-panel));
+    border:1px solid var(--border-sage);
+    border-radius:18px;
+    padding:28px 22px 22px;
+    box-shadow:var(--shadow);
+  }
+  .dedication-card::before, .dedication-card::after{
+    content:"";
+    position:absolute; width:26px; height:26px;
+    border:2px solid var(--gold-dim);
+    opacity:0.6;
+  }
+  .dedication-card::before{ top:10px; right:10px; border-left:none; border-bottom:none; }
+  .dedication-card::after{ bottom:10px; left:10px; border-right:none; border-top:none; }
+
+  .occasion-badge{
+    display:inline-block;
+    font-size:13px;
+    letter-spacing:0.3px;
+    color:var(--gold-soft);
+    background:rgba(201,162,75,0.12);
+    border:1px solid var(--gold-dim);
+    border-radius:20px;
+    padding:5px 16px;
+    margin-bottom:12px;
+  }
+  .dedication-name{
+    font-family:'Amiri', serif;
+    font-size:30px;
+    font-weight:700;
+    color:var(--text-cream);
+    margin:4px 0 2px;
+    line-height:1.5;
+  }
+  .dedication-note{
+    font-size:13.5px;
+    color:var(--text-muted);
+    margin:0 0 16px;
+  }
+  .round-label{
+    font-size:14px;
+    color:var(--gold-soft);
+    margin:0 0 16px;
+  }
+
+  /* tasbih ring - signature element */
+  .tasbih-ring{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:6px;
+    max-width:420px;
+    margin:0 auto 18px;
+  }
+  .bead{
+    width:10px; height:10px; border-radius:50%;
+    background:var(--bg-card);
+    border:1px solid var(--border-sage);
+    transition:all .3s ease;
+  }
+  .bead.filled{
+    background:var(--gold);
+    border-color:var(--gold);
+    box-shadow:0 0 6px rgba(201,162,75,0.7);
+  }
+
+  .edit-btn{
+    background:none;
+    border:1px solid var(--gold-dim);
+    color:var(--gold-soft);
+    font-family:'Vazirmatn',sans-serif;
+    font-size:13px;
+    padding:7px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:background .2s;
+  }
+  .edit-btn:hover{ background:rgba(201,162,75,0.12); }
+
+  .mode-toggle{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .mode-btn{
+    background:var(--bg-card);
+    border:1px solid var(--border-sage);
+    color:var(--text-muted);
+    font-family:'Vazirmatn',sans-serif;
+    font-size:12px;
+    padding:7px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all .2s;
+  }
+  .mode-btn.active{
+    background:rgba(201,162,75,0.18);
+    border-color:var(--gold);
+    color:var(--gold-soft);
+  }
+
+  .share-hint{
+    max-width:640px;
+    margin:0 auto 26px;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--text-muted);
+    line-height:1.8;
+  }
+
+  /* ---------- Completion banner ---------- */
+  .complete-banner{
+    max-width:640px;
+    margin:0 auto 26px;
+    background:linear-gradient(180deg, rgba(201,162,75,0.18), rgba(201,162,75,0.05));
+    border:1px solid var(--gold-dim);
+    border-radius:16px;
+    padding:22px;
+    text-align:center;
+    display:none;
+  }
+  .complete-banner.show{ display:block; }
+  .complete-banner p{ font-size:15px; color:var(--gold-soft); margin:0 0 14px; line-height:1.9;}
+  .complete-banner button{
+    background:var(--gold);
+    color:#1A2A22;
+    border:none;
+    font-family:'Vazirmatn',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    padding:10px 22px;
+    border-radius:10px;
+    cursor:pointer;
+  }
+
+  /* ---------- Grid ---------- */
+  .juz-grid{
+    max-width:900px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:10px;
+  }
+  @media (max-width:760px){ .juz-grid{ grid-template-columns:repeat(4, 1fr);} }
+  @media (max-width:460px){ .juz-grid{ grid-template-columns:repeat(3, 1fr);} }
+
+  .juz-card{
+    position:relative;
+    background:var(--bg-card);
+    border:1px solid var(--border-sage);
+    border-radius:12px;
+    padding:10px 6px 9px;
+    text-align:center;
+    cursor:pointer;
+    transition:transform .15s, border-color .2s, background .2s;
+    min-height:80px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+  }
+  .juz-card:hover{ transform:translateY(-2px); border-color:var(--gold-dim); }
+  .juz-card.claimed{
+    background:linear-gradient(180deg, rgba(201,162,75,0.16), rgba(201,162,75,0.05));
+    border-color:var(--gold);
+  }
+  .juz-num{
+    font-family:'Amiri', serif;
+    font-size:20px;
+    color:var(--gold-soft);
+  }
+  .juz-label{ font-size:10px; color:var(--text-muted); }
+  .juz-sub{ font-size:8.5px; color:var(--gold-dim); margin-top:-2px; }
+  .juz-name{
+    font-size:11.5px;
+    color:var(--text-cream);
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    padding:0 4px;
+  }
+
+  /* ---------- History ---------- */
+  .history-panel{
+    max-width:640px;
+    margin:34px auto 0;
+  }
+  .history-panel h3{
+    font-size:14px;
+    color:var(--gold-soft);
+    text-align:center;
+    margin-bottom:12px;
+    font-weight:600;
+  }
+  .history-item{
+    background:var(--bg-panel);
+    border:1px solid var(--border-sage);
+    border-radius:12px;
+    padding:12px 16px;
+    margin-bottom:8px;
+    font-size:12.5px;
+    color:var(--text-muted);
+    line-height:1.9;
+  }
+  .history-item b{ color:var(--gold-soft); }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal{
+    background:var(--bg-panel-light);
+    border:1px solid var(--border-sage);
+    border-radius:16px;
+    padding:24px;
+    width:100%;
+    max-width:340px;
+    box-shadow:var(--shadow);
+  }
+  .modal h4{ margin:0 0 6px; font-size:16px; color:var(--gold-soft); }
+  .modal p.sub{ margin:0 0 16px; font-size:12.5px; color:var(--text-muted); }
+  .modal input, .modal select, .modal textarea{
+    width:100%;
+    background:var(--bg-deep);
+    border:1px solid var(--border-sage);
+    color:var(--text-cream);
+    font-family:'Vazirmatn',sans-serif;
+    font-size:14px;
+    padding:10px 12px;
+    border-radius:9px;
+    margin-bottom:12px;
+  }
+  .modal-actions{ display:flex; gap:8px; margin-top:6px; }
+  .modal-actions button{
+    flex:1;
+    padding:10px;
+    border-radius:9px;
+    border:none;
+    font-family:'Vazirmatn',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .btn-primary{ background:var(--gold); color:#1A2A22; }
+  .btn-secondary{ background:transparent; border:1px solid var(--border-sage) !important; color:var(--text-muted); }
+  .btn-danger{ background:var(--warn); color:#fff; }
+
+  .loading{
+    text-align:center; padding:60px 0; color:var(--text-muted); font-size:13px;
+  }
+  .field-label{ font-size:12px; color:var(--text-muted); margin-bottom:6px; display:block; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="bg-pattern"></div>
+  <div class="loading" id="loadingMsg">در حال بارگذاری...</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+
+// شناسه ختم از لینک
+const urlParams = new URLSearchParams(window.location.search);
+
+const KHATM_ID = urlParams.get("id") || "default";
+
+// کلید ذخیره مخصوص هر ختم
+const STORAGE_KEY = `khatm_${KHATM_ID}`;
+// =========================
+// Supabase
+// =========================
+
+const SUPABASE_URL = "https://vswlvsxdsnwvboyyjjdv.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_2cVLS1yHNHxcdBArJZZing_Uc_mCQLx";
+
+const sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+const PERSIAN_DIGITS = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+const ROUND_WORDS = ['اول','دوم','سوم','چهارم','پنجم','ششم','هفتم','هشتم','نهم','دهم'];
+const OCCASIONS = [
+  { value:'مجلس شام غریبان', category:'mourning' },
+  { value:'مجلس ترحیم', category:'mourning' },
+  { value:'چهلم', category:'mourning' },
+  { value:'سالگرد', category:'mourning' },
+  { value:'ختم قرآن برای سلامتی', category:'health' },
+  { value:'شب‌های جمعه', category:'friday' },
+  { value:'سایر', category:'other' }
+];
+
+function getCategory(occasion){
+  const found = OCCASIONS.find(o => o.value === occasion);
+  return found ? found.category : 'other';
+}
+
+function getTitleText(){
+  const { occasion, name } = state.dedication;
+  const cat = getCategory(occasion);
+  if(!name){
+    if(cat==='friday') return 'ختم قرآن شب‌های جمعه';
+    return 'ختم قرآن';
+  }
+  if(cat==='health') return 'برای سلامتی ' + escapeHtml(name);
+  if(cat==='mourning') return 'برای شادی روح ' + escapeHtml(name);
+  if(cat==='friday') return 'به نیت ثواب ' + escapeHtml(name);
+  return 'به نیت ' + escapeHtml(name);
+}
+
+function getCompletionText(){
+  const { occasion, name } = state.dedication;
+  const cat = getCategory(occasion);
+  const person = name ? escapeHtml(name) : (cat==='mourning' ? 'مرحوم/مرحومه' : 'این عزیز');
+  if(cat==='health'){
+    return `خداوند سلامتی و شفای کامل را نصیب ${person} گرداند.`;
+  }
+  if(cat==='mourning'){
+    return `خداوند روح ${person} را غریق رحمت خود گرداند.`;
+  }
+  if(cat==='friday'){
+    return `ثواب این ختم، به نیت شب جمعه، شادی روح تمام مؤمنین${name ? ' و ' + person : ''} باد.`;
+  }
+  return `خداوند این نیت خیر را قبول کند.`;
+}
+
+function toPersianNum(n){
+  return String(n).split('').map(d => PERSIAN_DIGITS[+d] ?? d).join('');
+}
+function roundWord(n){
+  return ROUND_WORDS[n-1] || (toPersianNum(n) + 'م');
+}
+
+let state = {
+  dedication: { occasion: 'مجلس ترحیم', name: '', note: '' },
+  round: 1,
+  mode: 'juz',
+  claims: {},
+  history: []
+};
+
+function totalUnits(){ return state.mode === 'hizb' ? 120 : 30; }
+function unitLabel(){ return state.mode === 'hizb' ? 'حزب' : 'جزء'; }
+
+/*═══════════════════════════════════════════════
+  Storage Manager
+  فعلاً از localStorage استفاده می‌کند
+  بعداً فقط همین قسمت به Firebase متصل می‌شود.
+═══════════════════════════════════════════════*/
+
+const StorageManager = {
+
+    async load() {
+
+        try {
+
+            const saved = localStorage.getItem(STORAGE_KEY);
+
+            if (!saved) return null;
+
+            return JSON.parse(saved);
+
+        } catch (err) {
+
+            console.error("Storage Load Error :", err);
+
+            localStorage.removeItem(STORAGE_KEY);
+
+            return null;
+
+        }
+
+    },
+
+    async save(data) {
+
+        try {
+
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(data)
+            );
+
+            return true;
+
+        } catch (err) {
+
+            console.error("Storage Save Error :", err);
+
+            return false;
+
+        }
+
+    },
+
+    async clear() {
+
+        localStorage.removeItem(STORAGE_KEY);
+
+    }
+
+};
+
+
+async function loadOnlineState(){
+
+    const {data,error}=await sb
+        .from("claims")
+        .select("*")
+        .eq("khatm_id",KHATM_ID)
+        .order("juz");
+
+    if(error){
+
+        console.log(error);
+
+        return;
+
+    }
+
+    state.claims={};
+
+    data.forEach(item=>{
+
+        state.claims[item.juz]={
+
+            name:item.full_name,
+
+            phone:item.phone,
+
+            round:item.round,
+
+            time:item.created_at
+
+        };
+
+    });
+
+}
+async function loadState() {
+
+    const saved = await StorageManager.load();
+
+    if (saved) {
+
+        state = saved;
+
+    }
+
+    // جلوگیری از خطا در نسخه‌های قدیمی
+
+    state.claims ??= {};
+
+    state.history ??= [];
+
+    state.round ??= 1;
+
+}
+
+
+
+async function saveState() {
+
+    const ok = await StorageManager.save(state);
+
+    if (!ok) {
+
+        alert("خطا در ذخیره اطلاعات.");
+
+    }
+
+}
+
+function claimedCount(){ return Object.keys(state.claims).length; }
+
+function render(){
+  const app = document.getElementById('app');
+  const TOTAL = totalUnits();
+  const unit = unitLabel();
+  const count = claimedCount();
+  const isComplete = count >= TOTAL;
+
+  let beadsHtml = '';
+  for(let i=1;i<=TOTAL;i++){
+    beadsHtml += `<div class="bead ${state.claims[i] ? 'filled' : ''}"></div>`;
+  }
+
+  let gridHtml = '';
+  for(let i=1;i<=TOTAL;i++){
+    const owner = state.claims[i];
+    const subLine = state.mode === 'hizb'
+      ? `<div class="juz-sub">جزء ${toPersianNum(Math.ceil(i/4))}</div>` : '';
+    gridHtml += `
+      <div class="juz-card ${owner ? 'claimed' : ''}" data-num="${i}">
+        <div class="juz-num">${toPersianNum(i)}</div>
+        <div class="juz-label">${unit}</div>
+        ${subLine}
+        ${owner ? `<div class="juz-name">${escapeHtml(owner.name)}</div>` : ''}
+      </div>`;
+  }
+
+  let historyHtml = '';
+  if(state.history.length){
+    historyHtml = `<div class="history-panel"><h3>ختم‌های پیشین</h3>`;
+    state.history.slice().reverse().forEach(h=>{
+     const names = h.claims && Object.values(h.claims).length
+    ? Object.values(h.claims)
+        .map(c => c.name)
+        .join("، ")
+    : "—";
+      const hUnit = h.mode === 'hizb' ? 'حزب' : 'جزء';
+      const hTotal = h.total || 30;
+      historyHtml += `<div class="history-item"><b>ختم ${roundWord(h.round)}</b> (${toPersianNum(hTotal)} ${hUnit}) — به تاریخ ${h.date}<br>شرکت‌کنندگان: ${escapeHtml(names)}</div>`;
+    });
+    historyHtml += `</div>`;
+  }
+
+  app.innerHTML = `
+    <div class="bg-pattern"></div>
+    <div class="dedication-card">
+      <div class="occasion-badge">${escapeHtml(state.dedication.occasion)}</div>
+      <div class="dedication-name">${getTitleText()}</div>
+      ${state.dedication.note ? `<div class="dedication-note">${escapeHtml(state.dedication.note)}</div>` : ''}
+      <div class="round-label">ختم ${roundWord(state.round)} — ${toPersianNum(count)} از ${toPersianNum(TOTAL)} ${unit} تکمیل شده</div>
+      <div class="tasbih-ring">${beadsHtml}</div>
+      <div class="mode-toggle">
+        <button class="mode-btn ${state.mode==='juz' ? 'active' : ''}" data-mode="juz">تقسیم به جزء (۳۰ بخش)</button>
+        <button class="mode-btn ${state.mode==='hizb' ? 'active' : ''}" data-mode="hizb">تقسیم به حزب (۱۲۰ بخش)</button>
+      </div>
+      <button class="edit-btn" id="editBtn">ویرایش اطلاعات مجلس</button>
+    </div>
+
+    <div class="share-hint">انتخاب هر ${unit} کاملاً آزاد است — هرکس هر ${unit} خالی را که بخواهد، به هر ترتیبی، می‌تواند برای خودش ثبت کند (لازم نیست از ۱ شروع کنید). این صفحه را می‌توانید لینکش را در گروه یا کانال (واتساپ، تلگرام و…) به اشتراک بگذارید؛ انتخاب‌ها برای همه به‌صورت زنده به‌روزرسانی می‌شود.</div>
+
+    <div class="complete-banner ${isComplete ? 'show' : ''}">
+      <p>🌙 ختم ${roundWord(state.round)} تکمیل شد.<br>${getCompletionText()}</p>
+      <button id="newRoundBtn">آغاز ختم ${roundWord(state.round+1)}</button>
+    </div>
+
+    <div class="juz-grid">${gridHtml}</div>
+
+    ${historyHtml}
+  `;
+
+  document.getElementById('editBtn').onclick = openDedicationModal;
+  if(isComplete){
+    document.getElementById('newRoundBtn').onclick = startNewRound;
+  }
+  document.querySelectorAll('.juz-card').forEach(card=>{
+    card.onclick = () => onJuzClick(parseInt(card.dataset.num));
+  });
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.onclick = () => onModeChange(btn.dataset.mode);
+  });
+}
+
+async function onModeChange(newMode){
+  if(newMode === state.mode) return;
+  if(claimedCount() > 0){
+    const ok = confirm(`تغییر واحد به «${newMode==='hizb' ? 'حزب (۱۲۰ بخش)' : 'جزء (۳۰ بخش)'}» باعث می‌شود انتخاب‌های ثبت‌شدهٔ همین ختم پاک شود (این دور به‌عنوان ختم کامل‌شده ثبت نمی‌شود). آیا مطمئن هستید؟`);
+    if(!ok) return;
+  }
+  state.mode = newMode;
+  state.claims = {};
+  await saveState();
+  render();
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.innerText = str;
+  return d.innerHTML;
+}
+
+async function onJuzClick(num){
+
+    // آخرین وضعیت را دوباره بخوان
+   await loadOnlineState();
+
+    const owner = state.claims[num];
+
+if(owner){
+
+    render();
+
+    openReleaseModal(num, owner.name);
+
+    return;
+
+}
+
+    openClaimModal(num);
+
+}
+
+function showModal(html){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay show';
+  overlay.innerHTML = `<div class="modal">${html}</div>`;
+  overlay.onclick = (e)=>{ if(e.target === overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function openClaimModal(num){
+  const unit = unitLabel();
+  const overlay = showModal(`
+    <h4>انتخاب ${unit} ${toPersianNum(num)}</h4>
+    <p class="sub">نام خود را وارد کنید تا این ${unit} برای شما ثبت شود.</p>
+    <input id="claimName" placeholder="نام شما" maxlength="40" />
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelBtn">انصراف</button>
+      <button class="btn-primary" id="confirmBtn">ثبت نام</button>
+    </div>
+  `);
+  overlay.querySelector('#cancelBtn').onclick = ()=>overlay.remove();
+  const input = overlay.querySelector('#claimName');
+  input.focus();
+  overlay.querySelector('#confirmBtn').onclick = async ()=>{
+    const name = input.value.trim();
+    if(!name){ input.focus(); return; }
+// جلوگیری از ثبت تکراری
+// آخرین وضعیت را از سرور بخوان
+await loadOnlineState();
+
+if(state.claims[num]){
+
+    overlay.remove();
+
+    render();
+
+    alert("این جزء قبلاً توسط شخص دیگری انتخاب شده است.");
+
+    return;
+
+}
+
+// ثبت در Supabase
+const { error } = await sb
+    .from("claims")
+    .insert([{
+        khatm_id: KHATM_ID,
+        round: state.round,
+        juz: num,
+        full_name: name,
+        phone: ""
+    }]);
+
+if(error){
+
+    alert("خطا در ثبت:\n" + error.message);
+
+    return;
+
+}
+
+// دوباره از سرور بخوان
+await loadOnlineState();
+
+overlay.remove();
+
+render();
+  };
+}
+
+function openReleaseModal(num, owner){
+  const unit = unitLabel();
+  const overlay = showModal(`
+    <h4>${unit} ${toPersianNum(num)}</h4>
+    <p class="sub">این ${unit} توسط <b style="color:var(--gold-soft)">${escapeHtml(owner)}</b> انتخاب شده است.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="closeBtn">بستن</button>
+    <button class="btn-danger" id="releaseBtn">
+حذف (رمز مدیر)
+</button>
+    </div>
+  `);
+  overlay.querySelector('#closeBtn').onclick = ()=>overlay.remove();
+  overlay.querySelector('#releaseBtn').onclick = async ()=>{
+
+    const password = prompt("رمز مدیر را وارد کنید");
+
+    if(password !== "1234"){
+        alert("رمز اشتباه است.");
+        return;
+    }
+
+    delete state.claims[num];
+
+    await saveState();
+
+    overlay.remove();
+
+    render();
+
+};
+}
+
+function nameFieldLabel(occasion){
+  const cat = getCategory(occasion);
+  if(cat==='health') return 'نام کسی که برای سلامتی‌اش دعا می‌کنید (اختیاری)';
+  if(cat==='friday') return 'نام (اختیاری)';
+  return 'نام مرحوم / مرحومه (اختیاری)';
+}
+
+function openDedicationModal(){
+  const optionsHtml = OCCASIONS.map(o =>
+    `<option value="${o.value}" ${state.dedication.occasion===o.value?'selected':''}>${o.value}</option>`
+  ).join('');
+
+  const overlay = showModal(`
+    <h4>اطلاعات مجلس</h4>
+    <p class="sub">این اطلاعات برای همه شرکت‌کنندگان نمایش داده می‌شود.</p>
+    <label class="field-label">نوع ختم</label>
+    <select id="occasionSel">${optionsHtml}</select>
+    <label class="field-label" id="nameLabel">${nameFieldLabel(state.dedication.occasion)}</label>
+    <input id="nameInput" value="${escapeHtml(state.dedication.name)}" placeholder="مثلاً: حاجی محمد کریمی" />
+    <label class="field-label">توضیح یا تاریخ (اختیاری)</label>
+    <input id="noteInput" value="${escapeHtml(state.dedication.note)}" placeholder="مثلاً: ۵ سرطان ۱۴۰۵" />
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelBtn">انصراف</button>
+      <button class="btn-primary" id="saveBtn">ذخیره</button>
+    </div>
+  `);
+  overlay.querySelector('#cancelBtn').onclick = ()=>overlay.remove();
+  overlay.querySelector('#occasionSel').onchange = (e)=>{
+    overlay.querySelector('#nameLabel').textContent = nameFieldLabel(e.target.value);
+  };
+  overlay.querySelector('#saveBtn').onclick = async ()=>{
+    state.dedication.occasion = overlay.querySelector('#occasionSel').value;
+    state.dedication.name = overlay.querySelector('#nameInput').value.trim();
+    state.dedication.note = overlay.querySelector('#noteInput').value.trim();
+    await saveState();
+    overlay.remove();
+    render();
+  };
+}
+
+async function startNewRound(){
+  const today = new Date().toLocaleDateString('fa-IR');
+  state.history.push({
+    round: state.round,
+    date: today,
+    claims: { ...state.claims },
+    mode: state.mode,
+    total: totalUnits()
+  });
+  state.round += 1;
+  state.claims = {};
+  await saveState();
+  render();
+}
+
+(async function init(){
+  await loadState();
+  render();
+})();
+sb
+
+.channel("claims")
+
+.on(
+
+"postgres_changes",
+
+{
+
+event:"*",
+
+schema:"public",
+
+table:"claims"
+
+},
+
+payload=>{
+
+loadOnlineState().then(()=>{
+
+render();
+
+});
+
+}
+
+)
+
+.subscribe();
+</script>
+</body>
+</html>
