@@ -716,9 +716,19 @@ function openReleaseModal(num, owner){
         return;
     }
 
-    delete state.claims[num];
+    const { error } = await sb
+        .from("claims")
+        .delete()
+        .eq("khatm_id", KHATM_ID)
+        .eq("round", state.round)
+        .eq("juz", num);
 
-    await saveState();
+    if(error){
+        alert("خطا در حذف:\n" + error.message);
+        return;
+    }
+
+    await loadOnlineState();
 
     overlay.remove();
 
